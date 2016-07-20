@@ -161,7 +161,10 @@ Roku.prototype.launchById = function(id, fn) {
 
 Roku.prototype.info = function(fn) {
   var parser = sax.createStream({ strict: true });
-  request.get(this.baseUrl).on('error', fn).pipe(parser).on('error', fn);
+  request.get({
+    url: this.baseUrl,
+    timeout: 5000
+  }).on('error', fn).pipe(parser).on('error', fn);
 
   var ret = {}, where = [], currentNode;
 
