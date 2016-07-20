@@ -146,9 +146,22 @@ Roku.prototype.launch = function(name, fn) {
   this.processQueue();
 };
 
+Roku.prototype.launchById = function(id, fn) {
+  var baseUrl = this.baseUrl;
+
+  this.commandQueue.push(function(callback) {
+    request.post(baseUrl + 'launch/' + id, function(e, r, b) {
+      callback(e)
+      fn && fn(e)
+    });
+  }.bind(this));
+  
+  this.processQueue();
+};
+
 Roku.prototype.info = function(fn) {
   var parser = sax.createStream({ strict: true });
-  request.get(this.baseUrl).pipe(parser).on('error', fn);
+  request.get(this.baseUrl).on('error', fn).pipe(parser).on('error', fn);
 
   var ret = {}, where = [], currentNode;
 
